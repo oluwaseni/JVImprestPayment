@@ -1,0 +1,121 @@
+﻿
+
+@model JV_Imprest_Payment.Models.ViewModels.PayRequestViewModel
+
+
+<style>
+    body {
+        background-color: #E6E6FA;
+    }
+
+    h1, h4 {
+        text-align: center;
+        color: #191970;
+    }
+
+    label {
+        color: #191970;
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-color: #FFBF00;
+    }
+
+    .btn-primary {
+        background-color: #191970;
+        border-color: #191970;
+    }
+
+    .btn-primary:hover {
+        background-color: #FFBF00;
+        border-color: #FFBF00;
+    }
+
+    a {
+        color: #191970;
+    }
+</style>
+
+<h5>Request</h5>
+<hr />
+<div class="btn-toolbar mb-2 mb-md-0">
+    <div class="row" style="width: 100% !important;">
+        <div class="col-6">
+    <div class="btn-group me-2">
+        <a href="/PayRequests/ExportExcel" type="button" class="btn btn-sm btn-outline-success"><i class="fas fa-file-excel"></i> Export Template</a>
+    </div>
+    </div>
+        <div class="col-6">
+            <form method="post" asp-controller="PayRequests" asp-action="Import" enctype="multipart/form-data" style="background-color:black !important; float:right !important">
+                <div class="form-row" style="border: solid, #0094ff 2px !important; background-color:aquamarine !important">
+                    <div class="input-group" style="background-color:antiquewhite !important">
+                        <!-- Add the dropdown list for category selection -->
+                        <select class="form-control" id="categoryId" name="categoryId">
+                            <option value="">Select Category</option>
+                            @foreach (var category in Model.GetAfeStructures)
+                            {
+                                <option value="@category.Id">@category.Classification</option>
+                            }
+                        </select>
+                        <input type="file" class="form-control" id="file" name="file">
+                        <button type="submit" class="btn btn-sm btn-success">
+                            <i class="fas fa-file-upload align-text-bottom"></i>
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+<hr />
+
+<div class="container">
+
+   
+    <div class="card" style="padding: 5% !important">
+    <form method="post" asp-action="Create" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="PayRequestModel.Description" class="control-label"></label>
+                    <input asp-for="PayRequestModel.Description" class="form-control" />
+                    <span asp-validation-for="PayRequestModel.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PayRequestModel.TransactionDate" class="control-label"></label>
+                    <input asp-for="PayRequestModel.TransactionDate" class="form-control" />
+                    <span asp-validation-for="PayRequestModel.TransactionDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PayRequestModel.CategoryId" class="control-label"></label>
+                    <select asp-for="PayRequestModel.CategoryId" asp-items="@(new SelectList(Model.GetAfeStructures, "Id", "Classification"))" class="form-control"></select>
+                    <span asp-validation-for="PayRequestModel.CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="file" class="form-label">File Upload</label>
+                    <input type="file" class="form-control" id="file" name="file">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

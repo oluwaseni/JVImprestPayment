@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Payment Imprest</title>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.css" rel="stylesheet" />@*
+    <link href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-shims.min.css" media="all" rel="stylesheet" />
+    <link href="https://kit-free.fontawesome.com/releases/latest/css/free-v4-font-face.min.css" media="all" rel="stylesheet" />
+    <link href="https://kit-free.fontawesome.com/releases/latest/css/free.min.css" media="all" rel="stylesheet" />*@
+    <script src="https://kit.fontawesome.com/f024d0947f.js" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+
+    <style>
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        .b-example-divider {
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+            .nav-scroller .nav {
+                display: flex;
+                flex-wrap: nowrap;
+                padding-bottom: 1rem;
+                margin-top: -1px;
+                overflow-x: auto;
+                text-align: center;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="" asp-area="" style="color: #432CCC"; font-size: 150%;" asp-controller="Home" asp-action="Index">Imprest Payment</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul hidden class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <partial name="_LoginPartial" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+    <div style="width: 100%; padding: 0% 12% 0% 10% !important;">
+    <div class="row">
+        @if (User.Identity.IsAuthenticated)
+        {
+           <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+    <div class="position-sticky pt-3 sidebar-sticky">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/PayRequests/Index">
+                @*<span data-feather="home" class="align-text-bottom"></span>*@
+                                    <i class="fas fa-tachometer-alt"></i> 
+                Dashboard
+            </a>
+        </li>
+        @if (User.IsInRole("Admin") || User.IsInRole("JVA"))
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="/AFEStructures/Index" data-link="AFEClassification">
+                                        <i class="fas fa-list-ol"></i> 
+                    AFE Classification
+                </a>
+            </li>
+        }
+      
+
+        <li class="nav-item">
+                <a class="nav-link" href="/PayRequests/Index" data-link="Requests">
+                    @*<span data-feather="bar-chart-2" class="align-text-bottom"></span>*@
+                                    <i class="fas fa-poll-h"></i> 
+                    Requests
+                </a>
+        </li>
+        
+        @if (User.IsInRole("Partner") || User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="/PayRequests/Create" data-link="NewRequest">
+                    @*<span data-feather="layers" class="align-text-bottom"></span>*@
+                                        <i class="fas fa-file-alt"></i> 
+                    New Request
+                </a>
+            </li>
+            <li hidden class="nav-item">
+                <a class="nav-link" href="#" data-link="AfeOwner">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    AFE Owner
+                </a>
+            </li>
+        }
+        @if (User.IsInRole("JVA"))
+        {
+            <li hidden class="nav-item">
+                <a class="nav-link" href="#" data-link="Accountant">
+                    <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                    Accountant
+                </a>
+            </li>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                                    <a class="nav-link" href="/Admin/Index" data-link="Admin">
+                                        @*<span data-feather="shopping-cart" class="align-text-bottom"></span>*@
+                                        <i class="fas fa-user-shield"></i>
+                                        Roles
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                </nav>
+            }
+
+            <main class="col-md-11 ms-sm-auto col-lg-11 main">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+
+    <footer hidden class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - JV_Imprest_Payment - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        feather.replace();
+    </script>
+    @*<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+

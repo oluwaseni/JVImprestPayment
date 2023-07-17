@@ -1,0 +1,97 @@
+﻿@model JV_Imprest_Payment.Models.ViewModels.AdminViewModel
+
+<h1>Assign Roles</h1>
+
+<form method="post" asp-controller="Admin" asp-action="AssignRole" class="assign-role-form">
+    <div class="table-responsive">
+        <table id="myData" class="table display table-striped table-bordered table-hover table-sm" style="width:100%;">
+            <thead class="table-head">
+                <tr>
+                    <th>User</th>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <th>@role.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.UserName</td>
+                        @foreach (var role in Model.Roles)
+                        {
+                            <td>
+                                <label class="toggle-button">
+                                    <input type="checkbox" name="selectedRoles[@user.Id]" value="@role.Name" data-role-name="@role.Name" @(Model.UserRoles[user.Id].Contains(role.Name) ? "checked" : "")>
+                                    <span class="slider"></span>
+                                    <input type="hidden" name="users" value="@user.Id">
+                                </label>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<style>
+    .assign-role-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .table-head {
+        background-color: #f8f9fa;
+    }
+
+    .toggle-button {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+        margin: 0;
+        background-color: #e6e6e6;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+        .toggle-button input[type="checkbox"] {
+            display: none;
+        }
+
+    .slider {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 26px;
+        height: 26px;
+        background-color: #fff;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .toggle-button input[type="checkbox"]:checked + .slider {
+        transform: translateX(30px);
+        background-color: blue;
+    }
+</style>
+
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            $('#myData').DataTable({
+                scrollX: true,
+            });
+        });
+
+    </script>
+}

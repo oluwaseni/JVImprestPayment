@@ -1,0 +1,374 @@
+﻿@model JV_Imprest_Payment.Models.PayRequest
+
+
+<style>
+    body {
+        background-color: #E6E6FA;
+    }
+
+    h1, h4 {
+        text-align: center;
+        color: #191970;
+    }
+
+    label {
+        color: #191970;
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-color: #FFBF00;
+    }
+
+    .btn-primary {
+        background-color: #191970;
+        border-color: #191970;
+    }
+
+        .btn-primary:hover {
+            background-color: #FFBF00;
+            border-color: #FFBF00;
+        }
+
+    a {
+        color: #191970;
+    }
+
+
+
+    .attachment-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .attachment-modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .attachment-modal-close {
+        color: #888;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .attachment-preview {
+        cursor: pointer;
+        text-decoration: underline;
+        color: blue;
+    }
+
+    .modal-backdrop {
+        z-index: -1;
+    }
+</style>
+
+<h5>Edit Request</h5>
+<div class="card" style="padding: 5% !important">
+    <form id="approveForm" asp-controller="PayRequests" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="control-label"></label>
+                    <input disabled asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="TransactionDate" class="control-label"></label>
+                    <input disabled asp-for="TransactionDate" class="form-control" />
+                    <span asp-validation-for="TransactionDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Category" class="control-label"></label>
+                    <input disabled asp-for="Category" class="form-control" />
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-group">
+                    <label for="file" class="form-label">File Upload</label>
+                    <input type="file" class="form-control" id="file" name="file">
+                    @if (!string.IsNullOrEmpty(Model.EvidenceOfPayment))
+                    {
+                        <a href="#" class="attachment-preview" data-image-url="@Url.Content("~/uploads/" + Model.EvidenceOfPayment)">View Attachment</a>
+                    }
+                </div>
+
+@if (User.IsInRole("Partner"))
+{
+                <button type="submit" class="btn btn-primary">Save</button>
+}
+
+@if (User.IsInRole("AFE"))
+{
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationModal">Approve</button>
+
+}
+
+@if (User.IsInRole("JVA"))
+{
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#reassignModal">Assign</button>
+
+}
+@if (User.IsInRole("AFE"))
+{
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#reassignModal">Reassign</button>
+
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#rejectionModal">Reject</button>
+
+}
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="attachmentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Attachment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" id="attachment-image" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index"><i class="fas fa-arrow-left"></i> Back </a>
+</div>
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to proceed with this action?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="confirmApproveButton">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Confirmation Modal -->
+<div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to proceed with this action?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="confirmRejectButton">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reassign Modal -->
+<div class="modal fade" id="reassignModal" tabindex="-1" role="dialog" aria-labelledby="reassignModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reassignModalLabel">Reassign</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Select box for reassignment -->
+                <form id="reassignForm" asp-action="Assign">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="CategoryId" />
+
+                    <div class="mb-3 form-group">
+                        <label for="Assignedto" class="form-label">Partner</label>
+                        <select asp-for="Assignedto" id="reassignUser" name="Assignedto" class="form-control">
+                            <option value="">Select a user</option>
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Id">@user.UserName</option>
+                            }
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="reassignSubmitButton" type="button" class="btn btn-primary">Assign</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".attachment-preview").click(function (e) {
+                e.preventDefault();
+                var attachmentUrl = $(this).data("image-url");
+                $("#attachment-image").attr("src", attachmentUrl);
+                $("#attachmentModal").modal("show");
+            });
+        });
+    </script>
+
+        <script>
+            $(document).ready(function () {
+                // Handle form submission for the Reassign button in the modal
+                $("#reassignSubmitButton").click(function () {
+                    $("#reassignForm").submit();
+                });
+            });
+    </script>
+
+   @* <script>
+        $(document).ready(function () {
+            $("#rejectButton").click(function () {
+                // Send an AJAX request to the Reject method
+                $.ajax({
+                    url: '/PayRequests/Reject',
+                    type: 'POST',
+                    data: { id: '@Model.Id' },
+                    success: function (response) {
+                        // Handle the success response if needed
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error response if needed
+                    }
+                });
+            });
+        });
+
+    </script>*@
+
+    <script>
+        $(document).ready(function () {
+            // Handle form submission for the Approve button
+            $("button[data-target='#confirmationModal']").click(function (e) {
+                e.preventDefault();
+                var form = $(this).closest("form");
+                var actionUrl = form.attr("action");
+                var approveUrl = actionUrl.replace("Edit", "Approve"); // Replace "Edit" with "Approve" in the URL
+                form.attr("action", approveUrl); // Update the form's action URL
+                form.submit();
+            });
+
+            // Handle form submission for the Reject button
+            $("button[data-target='#rejectionModal']").click(function (e) {
+                e.preventDefault();
+                var form = $(this).closest("form");
+                var actionUrl = form.attr("action");
+                var rejectUrl = actionUrl.replace("Edit", "Reject"); // Replace "Edit" with "Reject" in the URL
+                form.attr("action", rejectUrl); // Update the form's action URL
+                form.submit();
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+  $("#rejectButton").click(function() {
+    var rejectUrl = $(this).data("url");
+    
+    // Send an AJAX request to the Reject method
+    $.ajax({
+      url: rejectUrl,
+      type: 'POST',
+      data: { id: '@Model.Id' },
+      success: function(response) {
+        // Handle the success response if needed
+      },
+      error: function(xhr, status, error) {
+        // Handle the error response if needed
+      }
+    });
+  });
+});
+
+
+    </script>
+
+
+   @* <script>
+        $(document).ready(function () {
+            // Handle form submission for the Save button
+            $("#submitButton").click(function (e) {
+                e.preventDefault();
+                // Find the form and submit it
+                var $form = $(this).closest('form');
+                $form.unbind('submit').submit();
+            });
+
+            //// Handle form submission for the Reassign button in the modal
+            //$("#reassignSubmitButton").click(function (e) {
+            //    e.preventDefault();
+            //    // Get the selected user value
+            //    var selectedUser = $("#reassignUser").val();
+            //    // Set the value of the Assignedto field
+            //    $("input[name='Assignedto']").val(selectedUser);
+            //    // Find the form and submit it
+            //    var $form = $(this).closest(".modal").find("form");
+            //    $form.unbind('submit').submit();
+            //});
+
+            // Handle form submission for the Approve button
+            $("button[data-target='#confirmationModal']").click(function (e) {
+                e.preventDefault();
+                // Find the form and submit it
+                var $form = $(this).closest('form');
+                $form.unbind('submit').submit();
+            });
+        });
+    </script>
+
+*@
+   
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+}

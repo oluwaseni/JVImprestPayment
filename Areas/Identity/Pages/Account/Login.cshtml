@@ -1,0 +1,110 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+
+<style>
+    .login-form {
+        max-width: 460px;
+        margin-top: 10% !important;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+
+    .login-form h2 {
+        margin-bottom: 20px;
+        font-weight: bold;
+        color: #333;
+        width: 100% !important;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .form-group input {
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        background-color: #220456;
+        border-color: #220456;
+    }
+
+        .btn-primary:hover {
+            background-color: #221456;
+            border-color: #220456;
+        }
+
+        h5{
+        color: #220456
+        }
+
+
+    .forgot-password,
+    .register-new {
+        font-size: 14px;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .forgot-password:hover,
+    .register-new:hover {
+        color: #0069d9;
+    }
+</style>
+
+<div class="container" style="margin-left:-100px!important;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="login-form card" style="width:100% !important;">
+                <h2>Login</h2>
+                <h5>with your email account</h5>
+                <hr />
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Input.Email" class="control-label"></label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Input.Password" class="control-label"></label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            <label asp-for="Input.RememberMe" class="form-check-label">Remember me</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button id="login-submit" type="submit" class="btn btn-primary btn-block">Log in</button>
+                    </div>
+                    <div class="form-group">
+                        <p>
+                            <a id="forgot-password" asp-page="./ForgotPassword" class="forgot-password">Forgot your password?</a>
+                        </p>
+                        <p>
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="register-new">Register as a new user</a>
+                        </p>
+                       @* <p>
+                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="register-new">Resend email confirmation</a>
+                        </p>*@
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

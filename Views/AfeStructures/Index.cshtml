@@ -1,0 +1,81 @@
+﻿@model IEnumerable<JV_Imprest_Payment.Models.AfeStructure>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>AFE Classifications</h1>
+
+<p>
+    <a class="btn btn-outline-secondary" asp-action="Create">Create New </a>
+</p>
+
+<table id="myData" class="table display table-striped table-bordered table-hover table-sm" style="width:100%;">
+    <thead>
+        <tr>
+            <th>
+                AFE Code
+            </th>
+            <th>
+                Classification Name
+            </th>
+            <th>
+                AFE Owner
+            </th>
+            <th>
+                Owner's Email
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                End Date
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AfeCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Classification)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AfeOwner)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnerEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate.Year)
+            </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-success btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-edit"></i></a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Detail"><i class="fa fa-table"></i></a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></a>
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+
+@section Scripts{
+
+<script>
+
+    $(document).ready(function () {
+        $('#myData').DataTable({
+            scrollX: true,
+        });
+    });
+
+</script>
+}

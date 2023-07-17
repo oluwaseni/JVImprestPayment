@@ -1,0 +1,54 @@
+﻿@model List<PayRequest>
+
+<form asp-action="CreateMultiple" method="post" enctype="multipart/form-data">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Transaction Date</th>
+                <th>Category</th>
+                <th>Created By</th>
+                <th>Approved By</th>
+                <th>Actioned By</th>
+                <th>Process Date</th>
+                <th>Process Status</th>
+                <th>Evidence of Payment</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <tr>
+                    <td>
+                        <input type="text" asp-for="@Model[i].Description" />
+                    </td>
+                    <td>
+                        <input type="date" asp-for="@Model[i].TransactionDate" />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model[i].Category" />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model[i].CreatedBy" />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model[i].ApprovedBy" />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model[i].ActionedBy" />
+                    </td>
+                    <td>
+                        <input type="date" asp-for="@Model[i].ProcessDate" />
+                    </td>
+                    <td>
+                        <input type="text" asp-for="@Model[i].ProcessStatus" />
+                    </td>
+                    <td>
+                        <input type="file" asp-for="@Model[i].EvidenceOfPayment" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit">Create</button>
+</form>

@@ -1,0 +1,459 @@
+﻿@model JV_Imprest_Payment.Models.ViewModels.PayRequestViewModel
+
+@*@model IEnumerable<PayRequest>*@
+
+
+<link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+
+    .modal-backdrop {
+  z-index: -1;
+}
+
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+    }
+
+    .btn-blue {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-amber {
+        background-color: #ffc107;
+        color: #fff;
+    }
+
+    .table-head th {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+        .table-head th:first-child {
+            width: 100%;
+        }
+
+    .pattern-card {
+        background-color: #007bff; /* Replace with your desired background color */
+        background-image: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
+        background-size: 50px 50px; /* Adjust the size of the pattern */
+    }
+
+</style>
+
+<div class="home">
+<h1>Requests</h1>
+<!-- Display analytics and counts -->
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="alert alert-info">
+            @ViewBag.Message
+        </div>
+    }
+
+
+@if (User.IsInRole("Partner"))
+{
+    <div class="row" style="width: 100% !important; margin:auto !important;">
+            <div class="col-md-3">
+                <div class="card bg-info text-white pattern-card">
+                    <div class="card-body">
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.MyRequestsCount.Count </b><i class="fas fa-list-alt right display-5" style="font-size: 150% !important;"></i></p>
+                        <h5 class="card-title mt-2">Total</h5>
+                    </div>
+                </div>
+            </div>
+
+
+        <div class="col-md-3">
+                <div class="card bg-warning text-white pattern-card">
+                <div class="card-body">
+                    <p class="card-text display-5" style="font-size: 150% !important;">
+                        <b>@Model.InProgressCount.Count </b><i class="fas fa-spinner fa-pulse right display-5" style="font-size: 150% !important;"></i>
+
+                    </p>
+
+                    <h5 class="card-title mt-2">In Progress</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+                <div class="card bg-success text-white pattern-card">
+                <div class="card-body">
+
+                    <p class="card-text display-5" style="font-size: 150% !important;"><b> @Model.ApprovedCount.Count </b><i class="fas fa-check-double right display-5" style="font-size: 150% !important;"></i></p>
+                    <h5 class="card-title mt-2">Approved</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white  pattern-card">
+                <div class="card-body">
+
+                    <p class="card-text display-5" style="font-size: 150% !important;">
+                        <b>@Model.RejectedCount.Count </b><i class="fas fa-window-close right display-5" style="font-size: 150% !important;"></i>
+
+                    </p>
+                    <h5 class="card-title mt-2">Rejected</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("JVA"))
+{
+    <div class="row" style="width: 100% !important;">
+        <div class="col-md-3">
+            <div class="card bg-info text-white  pattern-card">
+                <div class="card-body">
+                    <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.TotalRequestCount </b><i class="fas fa-list-alt right"></i></p>
+                    <h5 class="card-title mt-2">Total </h5>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white  pattern-card">
+                <div class="card-body">
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.PendingRequestCount.Count </b><i class="fas fa-spinner fa-pulse fa-pulse right"></i></p>
+
+                    <h5 class="card-title mt-2">Pending</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white  pattern-card">
+                <div class="card-body">
+
+                    <p class="card-text display-5" style="font-size: 150% !important;"><b> @Model.ActionedRequestCount.Count </b><i class="fas fa-check-double right"></i></p>
+                    <h5 class="card-title mt-2">Actioned</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white  pattern-card">
+                <div class="card-body">
+
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.AccountantPerformance %</b><i class="fas fa-star-half-alt fa-spin right"></i></p>
+                    <h5 class="card-title mt-2">Performance</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (User.IsInRole("AFE"))
+{
+    <div class="row" style="width: 100% !important;">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white  pattern-card">
+                <div class="card-body">
+                    <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.AFEContracts?.Count </b><i class="fas fa-list-alt right"></i></p>
+                    <h5 class="card-title mt-2">All</h5>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white  pattern-card">
+                <div class="card-body">
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.AFEApproved?.Count </b><i class="fas fa-handshake right"></i></p>
+
+                    <h5 class="card-title mt-2">Approved</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white  pattern-card">
+                <div class="card-body">
+
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b> @Model.AFERejected?.Count </b><i class="fas fa-handshake-slash right"></i></p>
+                    <h5 class="card-title mt-2">Rejected</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white  pattern-card">
+                <div class="card-body">
+
+                        @if (!double.IsNaN(Model.AFEPerformance))
+                        {
+                            <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.AFEPerformance </b><i class="fas fa-star-half-alt fa-spin right"></i></p>
+                        }
+                        else
+                        {
+                            <p class="card-text display-5" style="font-size: 150% !important;"><b>N/A</b></p>
+                        }
+                        <h5 class="card-title mt-2">Performance</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="row" style="width: 100% !important;">
+        <div class="col-md-3">
+            <div class="card bg-info text-white  pattern-card">
+                <div class="card-body">
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.TotalRequestCount </b><i class="fas fa-list-ol right"></i></p>
+                    <h5 class="card-title mt-2">Total </h5>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white  pattern-card">
+                <div class="card-body">
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.OverAllPendingAccountant.Count </b><i class="fas fa-stream right"></i></p>
+
+                    <h5 class="card-title mt-2"> Pending</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white  pattern-card">
+                <div class="card-body">
+
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b> @Model.OverAllApproved.Count </b><i class="fas fa-handshake right"></i></p>
+                    <h5 class="card-title mt-2"> Approved </h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white  pattern-card">
+                <div class="card-body">
+
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.OverAllRejected.Count </b><i class="fas fa-handshake-slash right"></i></p>
+                    <h5 class="card-title mt-2">Rejected </h5>
+                </div>
+            </div>
+        </div>
+      @*  <div class="col-md-4">
+            <div class="card bg-danger text-white mt-4">
+                <div class="card-body">
+                    <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.OverAllRejected.Count </b><i class="fas fa-check-circle right"></i></p>
+                    <h5 class="card-title mt-2">Rejected </h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-secondary text-white mt-4">
+                <div class="card-body">
+                    @if (!double.IsNaN(Model.OverAllPerformance))
+                    {
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>@Model.OverAllPerformance </b><i class="fas fa-check-circle right"></i></p>
+                    }
+                    else
+                    {
+                        <p class="card-text display-5" style="font-size: 150% !important;"><b>N/A</b></p>
+                    }
+                    <h5 class="card-title mt-2">Performance</h5>
+                </div>
+            </div>
+        </div>
+*@
+    </div>
+}
+
+
+<hr />
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Attachment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="" id="attachment-image" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+@*///Modal for details*@
+
+@foreach (var item in Model.PayRequests)
+{
+    <!-- Modal -->
+    <div class="modal fade" id="myModal_@item.Id" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <dl>
+                        <dt>Description:</dt>
+                        <dd>@item.Description</dd>
+                        <dt>Transaction date:</dt>
+                        <dd>@item.TransactionDate</dd>
+                        <dt>Category:</dt>
+                        <dd>@item.Category</dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-blue btn-secondary" data-dismiss="modal">Wait</button>
+                    <form asp-controller="PayRequests" asp-action="Approve" method="post">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-amber btn-secondary">Approve</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+    <table id="myData" class="table display table-striped table-bordered table-hover table-sm" style="width:100%;">
+    <thead class="table-head">
+        <tr>
+            @*<th>ID</th>*@
+            <th>Description</th>
+            <th>Transaction Date</th>
+            <th>Category</th>
+            <th>Created By</th>
+            
+            @if (User.IsInRole("Admin"))
+                {
+                    <th>Accountant</th>
+                    <th>Assigned To</th>
+                }
+            <th>Status</th>
+            <th>Attachment</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PayRequests)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.TransactionDate)</td>
+                <td>@(item.Category != null ? item.Category.Classification : "Yuieo")</td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                 <td>@Html.DisplayFor(modelItem => item.Accountant)</td>
+                        <td>@(item.Assignedto != null ? Model.Users.FirstOrDefault(u => u.Id == item.Assignedto)?.UserName : string.Empty)</td>
+                    }
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.EvidenceOfPayment))
+                    {
+                        <a href="@Url.Content("~/uploads/" + item.EvidenceOfPayment)" class="view-attachment">View</a>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm rounded-0" type="button" data-toggle="tooltip" data-placement="top" title="Action"><i class="fa fa-edit"></i></a>
+                    @*<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm rounded-0 detail-button" type="button" data-toggle="modal" data-target="#myModal_@item.Id" data-placement="top" title="Detail"><i class="fa fa-table"></i></a>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot class="table-head">
+        <tr>
+            <th>Description</th>
+            <th>Transaction Date</th>
+            <th>Category</th>
+            <th>Created By</th>
+            
+@if (User.IsInRole("Admin"))
+{
+            <th>Accountant</th>
+            <th>Assigned To</th>
+}
+            <th>Status</th>
+            <th>Attachment</th>
+            <th>Action</th>
+        </tr>
+    </tfoot>
+</table>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+        $('#myData').DataTable({
+                scrollX: true,
+        });
+    });
+
+    </script>
+
+
+    <script>
+        function submitApproveForm(id) {
+            $("#approve-form-" + id).submit();
+        }
+    </script>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("a.view-attachment").click(function (e) {
+            e.preventDefault();
+            var attachmentUrl = $(this).attr("href");
+            $("#attachment-image").attr("src", attachmentUrl);
+            $("#myModal").modal("show");
+        });
+    });
+</script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("a.view-attachment").click(function (e) {
+                e.preventDefault();
+                var attachmentUrl = $(this).attr("href");
+                $("#attachment-image").attr("src", attachmentUrl);
+                $("#attachmentModal").modal("show");
+            });
+
+            $("a.detail-button").click(function (e) {
+                e.preventDefault();
+                var id = $(this).attr("asp-route-id");
+                $.ajax({
+                    type: "GET",
+                    url: "/PayRequests/Edit/" + id,
+                    success: function (response) {
+                        $("#detailModal .modal-body").html(response);
+                    },
+                    error: function () {
+                        $("#detailModal .modal-body").html("An error occurred while retrieving details.");
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+
+

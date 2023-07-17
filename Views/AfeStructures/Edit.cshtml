@@ -1,0 +1,96 @@
+﻿@model JV_Imprest_Payment.Models.AfeStructure
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<style>
+    body {
+        background-color: #E6E6FA;
+    }
+
+    h1, h4 {
+        text-align: center;
+        color: #191970;
+    }
+
+    label {
+        color: #191970;
+        font-weight: bold;
+    }
+
+    .form-control {
+        border-color: #FFBF00;
+    }
+
+    .btn-primary {
+        background-color: #191970;
+        border-color: #191970;
+    }
+
+        .btn-primary:hover {
+            background-color: #FFBF00;
+            border-color: #FFBF00;
+        }
+
+    a {
+        color: #191970;
+    }
+</style>
+
+
+<h4>AfeStructure</h4>
+<hr />
+<div class="container">
+    <div class="card" style="padding: 5% !important">
+        <form asp-action="Edit">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group mb-3">
+                <label asp-for="AfeCode" class="control-label"></label>
+                <input asp-for="AfeCode" class="form-control" />
+                <span asp-validation-for="AfeCode" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Classification" class="control-label"></label>
+                <input asp-for="Classification" class="form-control" />
+                <span asp-validation-for="Classification" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="AfeOwner" class="control-label"></label>
+                <input asp-for="AfeOwner" class="form-control" />
+                <span asp-validation-for="AfeOwner" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="OwnerEmail" class="control-label"></label>
+                <input asp-for="OwnerEmail" class="form-control" />
+                <span asp-validation-for="OwnerEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

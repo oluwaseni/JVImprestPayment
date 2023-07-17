@@ -1,0 +1,14 @@
+﻿@*@model UserRolesViewModel*@
+@*@model JV_Imprest_Payment.Models.ViewModels.UserRolesViewModel
+
+<h1>Assign Role to User: @Model.UserName</h1>
+
+<form asp-controller="UserManager" asp-action="AssignRole" method="post">
+    <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label asp-for="RoleId">Role:</label>
+        <select asp-for="RoleId" asp-items="@Model.Roles" class="form-control"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Assign Role</button>
+</form>
+*@
