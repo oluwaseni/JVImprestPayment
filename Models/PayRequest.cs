@@ -10,6 +10,7 @@ namespace JV_Imprest_Payment.Models
         [Display(Name = "Transaction Date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime TransactionDate { get; set; }
+        [Display(Name = "Category")]
         public int CategoryId { get; set; }
         public AfeStructure? Category { get; set; }
         public string? CreatedBy { get; set; }

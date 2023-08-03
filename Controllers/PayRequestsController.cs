@@ -300,10 +300,10 @@ namespace JV_Imprest_Payment.Controllers
                     </div>";
 
 
-                var to = "oajibade@oandoenergyresources.com";
+                var to = "tbadejo@oandoenergyresources.com";
                 var cc = userName;
 
-                _mailSender.SendEmailAsync(to, "JV Analysis Updated", emailBody);
+                _mailSender.SendEmailAsync(to, "JV Imprest Created", emailBody);
                 return RedirectToAction(nameof(Index));
 
             }
@@ -328,10 +328,18 @@ namespace JV_Imprest_Payment.Controllers
             }
 
             // Retrieve user data from the database
-            var users = await _context.Users.ToListAsync();
+
+            // Get all users and roles
+            var users = await _userManager.Users.ToListAsync();
+            //var roles = await _roleManager.Roles.ToListAsync();
+
+            var usersWithAFERole = users.Where(user => _userManager.IsInRoleAsync(user, "AFE").Result).ToList();
+
+            //var users = await _context.Users.ToListAsync();
+
 
             // Pass the user data to the view
-            ViewBag.Users = users;
+            ViewBag.Users = usersWithAFERole;
 
             return View(payRequest);
         }
@@ -358,6 +366,10 @@ namespace JV_Imprest_Payment.Controllers
                 {
                     return NotFound();
                 }
+                //var userMail = await _context.Users
+                var userMail = await _userManager.FindByIdAsync(payRequest.Assignedto); //.FindByNameAsync(userName);
+
+                var assignedMail = userMail.Email;
 
                 existingPayRequest.Assignedto = payRequest.Assignedto;
                 existingPayRequest.ActionedBy = userName;
@@ -382,10 +394,10 @@ namespace JV_Imprest_Payment.Controllers
             <p><b>Regards.</b></p>
             </div>";
 
-                var to = "oajibade@oandoenergyresources.com";
+                var to = assignedMail;// "oajibade@oandoenergyresources.com";
                 var cc = userName;
 
-                _mailSender.SendEmailAsync(to, "JV Analysis Updated", emailBody);
+                _mailSender.SendEmailAsync(to, "JV Imprest Updated", emailBody);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -433,7 +445,7 @@ namespace JV_Imprest_Payment.Controllers
         <p><b>Regards.</b></p>
         </div>";
 
-            var to = "oajibade@oandoenergyresources.com";
+            var to = payRequest.CreatedBy; // "oajibade@oandoenergyresources.com";
             var cc = userName;
 
             _ = _mailSender.SendEmailAsync(to, "JV Imprest Approved", emailBody);
@@ -471,7 +483,7 @@ namespace JV_Imprest_Payment.Controllers
         <p><b>Regards.</b></p>
         </div>";
 
-            var to = "oajibade@oandoenergyresources.com";
+            var to = payRequest.CreatedBy; // "oajibade@oandoenergyresources.com";
             var cc = userName;
 
             _ = _mailSender.SendEmailAsync(to, "JV Imprest Rejected", emailBody);
@@ -618,10 +630,10 @@ namespace JV_Imprest_Payment.Controllers
                             </div>";
 
 
-                            var to = "oajibade@oandoenergyresources.com";
+                            var to = "tbadejo@oandoenergyresources.com";
                             var cc = userName;
 
-                            _ = _mailSender.SendEmailAsync(to, "JV Imprest Payment Submitted", emailBody);
+                            _ = _mailSender.SendEmailAsync(to, "JV Imprest Payment Uploaded", emailBody);
 
                             return RedirectToAction("Index", "PayRequests");
                         }
